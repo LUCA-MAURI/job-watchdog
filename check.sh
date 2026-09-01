@@ -11,8 +11,13 @@ cd "$(dirname "$0")" || exit 1
 
 # Python tools are usually in a virtualenv rather than on the system PATH.
 # Look in the obvious places so they are not silently skipped.
-for d in "./venv/bin" "$HOME/.local/audit/bin" "$HOME/.local/bin"; do
-    [ -d "$d" ] && PATH="$d:$PATH"
+#
+# Appended, never prepended, and deliberately so: prepending would let a
+# binary named "find", "grep" or "python3" dropped into a venv inside the
+# checked-out tree shadow the real one for every command below. These
+# directories only fill gaps; the system PATH always wins.
+for d in "$PWD/venv/bin" "$HOME/.local/audit/bin" "$HOME/.local/bin"; do
+    [ -d "$d" ] && PATH="$PATH:$d"
 done
 export PATH
 
