@@ -5,8 +5,10 @@
 # for anyway. Missing ones are skipped with a note rather than failing, so the
 # script stays useful before you have installed all of them.
 #
-#   ./check.sh
+#   ./check.sh                  # missing tools are skipped and counted
+#   CHECK_STRICT=1 ./check.sh   # missing tools fail the run (CI uses this)
 set -uo pipefail
+strict=${CHECK_STRICT:-0}
 cd "$(dirname "$0")" || exit 1
 
 # Python tools are usually in a virtualenv rather than on the system PATH.
@@ -140,6 +142,9 @@ fi
 printf '\n'
 if [ $fail -ne 0 ]; then
     echo "SOMETHING FAILED"
+elif [ $skipped -ne 0 ] && [ "$strict" = 1 ]; then
+    echo "FAILED - $skipped tool(s) missing and CHECK_STRICT=1"
+    fail=1
 elif [ $skipped -ne 0 ]; then
     echo "PASSED WHAT RAN - $skipped tool(s) missing, not checked"
 else

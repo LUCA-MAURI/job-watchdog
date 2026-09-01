@@ -1,5 +1,7 @@
 # job-watchdog
 
+[![check](https://github.com/LUCA-MAURI/job-watchdog/actions/workflows/check.yml/badge.svg)](https://github.com/LUCA-MAURI/job-watchdog/actions/workflows/check.yml)
+
 **Know when a scheduled job stops working — including when it keeps succeeding.**
 
 Python 3.9+, standard library only, no dependencies, no agent, no server.
