@@ -9,12 +9,22 @@
 set -uo pipefail
 cd "$(dirname "$0")" || exit 1
 
+# Python tools are usually in a virtualenv rather than on the system PATH.
+# Look in the obvious places so they are not silently skipped.
+for d in "./venv/bin" "$HOME/.local/audit/bin" "$HOME/.local/bin"; do
+    [ -d "$d" ] && PATH="$d:$PATH"
+done
+export PATH
+
 fail=0
+skipped=0
 have() { command -v "$1" >/dev/null 2>&1; }
 step() { printf '\n=== %s ===\n' "$1"; }
 ok()   { printf '  PASS  %s\n' "$1"; }
 bad()  { printf '  FAIL  %s\n' "$1"; fail=1; }
-skip() { printf '  skip  %s (not installed)\n' "$1"; }
+# A skipped tool is not a pass. It is counted and reported at the end, because
+# a green run that quietly checked half of what it claims is worse than a red one.
+skip() { printf '  skip  %s (not installed)\n' "$1"; skipped=$((skipped + 1)); }
 
 step "self-tests"
 while IFS= read -r -d '' f; do
@@ -123,9 +133,11 @@ else
 fi
 
 printf '\n'
-if [ $fail -eq 0 ]; then
-    echo "ALL CLEAR"
-else
+if [ $fail -ne 0 ]; then
     echo "SOMETHING FAILED"
+elif [ $skipped -ne 0 ]; then
+    echo "PASSED WHAT RAN - $skipped tool(s) missing, not checked"
+else
+    echo "ALL CLEAR"
 fi
 exit $fail

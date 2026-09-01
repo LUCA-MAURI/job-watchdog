@@ -193,9 +193,12 @@ command:
 | shellcheck | the shell scripts |
 | PSScriptAnalyzer | the PowerShell, using Microsoft's own linter |
 
-Current status: **ALL CLEAR** on every one of them. Missing tools are skipped
-with a note rather than failing, so the script works before you have installed
-them all.
+Current status: **ALL CLEAR** on every one of them.
+
+A tool that is not installed is skipped rather than failing, so the script is
+usable before you have all of them - but a skipped tool is never counted as a
+pass. The final line only says `ALL CLEAR` when every tool actually ran;
+otherwise it tells you how many did not.
 
 Where a finding is suppressed, the suppression sits next to the code with the
 reason written out - `# noqa`, `# nosec`, `# nosemgrep`, or an entry in
