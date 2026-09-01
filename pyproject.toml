@@ -1,0 +1,31 @@
+# Config for the linters, so "it is clean" is a claim anyone can reproduce
+# rather than one they have to take on trust. See check.sh.
+[tool.ruff]
+target-version = "py39"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "S", "A", "C4", "SIM", "RUF"]
+ignore = [
+    # pathlib-purity rules do not apply here: os.open / os.chmod / os.fchmod
+    # are used deliberately, because the file mode and O_NOFOLLOW have to be
+    # set on the descriptor at creation time. pathlib cannot express that.
+    "PTH",
+    # typing.Dict / Optional are kept for Python 3.9 readability.
+    "UP",
+    # SIM105 wants contextlib.suppress instead of try/except/pass. Every one
+    # of those blocks here carries a comment saying which failure is being
+    # tolerated and why - "a read-only filesystem must not stop the run", and
+    # so on. Keeping the comment next to the exception it explains is worth
+    # more than the two lines suppress() would save.
+    "SIM105",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# S101: asserts are the self-tests. That is what they are for, and these
+# modules are run directly, never under `python -O`.
+"*" = ["S101"]
+
+[tool.bandit]
+# B101 is the same assert rule as ruff's S101, for the same reason.
+skips = ["B101"]

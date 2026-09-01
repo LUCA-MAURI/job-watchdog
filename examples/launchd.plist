@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  macOS: ~/Library/LaunchAgents/com.example.sync.plist
+  Load with: launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.sync.plist
+
+  Note StartInterval rather than StartCalendarInterval: launchd runs a missed
+  StartInterval job as soon as the machine wakes, which is what you want for a
+  laptop that sleeps. A calendar job missed at 03:00 on a sleeping Mac never
+  runs at all.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>          <string>com.example.sync</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/tools/job_watchdog.py</string>
+    <string>sync</string>
+    <string>--timeout</string><string>600</string>
+    <string>--</string>
+    <string>/opt/app/sync.sh</string>
+  </array>
+  <key>StartInterval</key>  <integer>900</integer>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>ALERT_TELEGRAM_TOKEN</key> <string>your-token</string>
+    <key>ALERT_TELEGRAM_CHAT</key>  <string>your-chat-id</string>
+  </dict>
+  <key>StandardOutPath</key>   <string>/tmp/sync.out</string>
+  <key>StandardErrorPath</key> <string>/tmp/sync.err</string>
+</dict>
+</plist>

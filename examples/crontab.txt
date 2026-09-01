@@ -1,0 +1,21 @@
+# cron: the wrapper goes in front of the command, nothing inside the job changes.
+#
+# MAILTO is deliberately empty. cron's own mail on non-zero exit is the thing
+# job-watchdog replaces: it fires on every failure with no state, which is how
+# a channel becomes noise nobody reads.
+MAILTO=""
+
+ALERT_TELEGRAM_TOKEN=your-token
+ALERT_TELEGRAM_CHAT=your-chat-id
+
+# every 15 minutes; alert if it fails, times out, or returns nothing
+*/15 * * * *  /opt/tools/job_watchdog.py sync -- /opt/app/sync.sh
+
+# nightly, longer timeout, three retries with backoff 60s -> 120s -> 240s
+0 3 * * *     /opt/tools/job_watchdog.py nightly --retries 3 --backoff 60 --timeout 3600 -- /opt/app/report.py
+
+# a health check that legitimately prints nothing when all is well
+*/5 * * * *   /opt/tools/job_watchdog.py health --allow-empty -- /opt/app/check.sh
+
+# the heartbeat monitor for long-running services (see deadman.json)
+*/5 * * * *   cd /opt/app && /opt/tools/deadman.py

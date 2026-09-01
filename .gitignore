@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+venv/
+logs/
+heartbeat/
+dist/
+.DS_Store
+
+# Never commit credentials. These entries are the cheap half of the defence;
+# the expensive half is not putting secrets in files in the first place.
+.env
+.env.*
+*.pem
+*.key
+token.txt
+secrets.json
+service.local.json
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/

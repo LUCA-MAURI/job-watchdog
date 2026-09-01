@@ -1,0 +1,7 @@
+{
+  "watch": [
+    {"name": "importer", "file": "heartbeat/importer.txt", "max_age_min": 15},
+    {"name": "poller",   "file": "heartbeat/poller.txt",   "max_age_min": 5},
+    {"name": "bot",      "file": "heartbeat/bot.txt",      "max_age_min": 30}
+  ]
+}
